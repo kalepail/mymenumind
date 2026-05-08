@@ -8,6 +8,7 @@ public enum MymindClientError: LocalizedError, Equatable {
     case invalidSecret
     case invalidResponse
     case rateLimited(retryAfter: TimeInterval?)
+    case forbidden(message: String)
     case serverError(statusCode: Int, message: String)
 
     public var errorDescription: String? {
@@ -27,6 +28,8 @@ public enum MymindClientError: LocalizedError, Equatable {
                 return "mymind rate limited this request. Try again in \(Int(ceil(retryAfter))) seconds."
             }
             return "mymind rate limited this request. Try again shortly."
+        case .forbidden(let message):
+            return message
         case .serverError(let statusCode, let message):
             return "mymind returned HTTP \(statusCode): \(message)"
         }
@@ -211,6 +214,11 @@ public final class MymindClient: Sendable {
         guard (200..<300).contains(httpResponse.statusCode) else {
             if httpResponse.statusCode == 429 {
                 throw MymindClientError.rateLimited(retryAfter: retryAfter(from: httpResponse))
+            }
+            if httpResponse.statusCode == 403 {
+                throw MymindClientError.forbidden(
+                    message: "mymind denied this. Check the key's access level; quick notes require Full access."
+                )
             }
             let message = problemDetail(from: data) ?? String(data: data, encoding: .utf8) ?? HTTPURLResponse.localizedString(forStatusCode: httpResponse.statusCode)
             throw MymindClientError.serverError(statusCode: httpResponse.statusCode, message: message)

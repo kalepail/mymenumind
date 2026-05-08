@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/mymenumind-hero.jpg" alt="MyMenuMind promotional graphic showing a warm macOS menu bar popover for searching and saving notes" width="100%">
+</p>
+
 # MyMenuMind
 
 MyMenuMind is a native macOS menu bar app for mymind. It lets you search your mind, open the 10 most recent items, and save a quick note without opening a browser.

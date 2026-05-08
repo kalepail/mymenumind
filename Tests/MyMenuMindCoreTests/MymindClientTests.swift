@@ -202,6 +202,24 @@ struct MymindClientTests {
         }
     }
 
+    @Test func exposesForbiddenAsPermissionMessage() async throws {
+        MockURLProtocol.requestHandler = { request in
+            httpResponse(for: request, statusCode: 403, body: "Forbidden")
+        }
+
+        let client = MymindClient(configuration: testConfiguration, session: mockSession)
+
+        do {
+            try await client.createQuickNote(text: "Remember this")
+            Issue.record("Expected forbidden error")
+        } catch let error as MymindClientError {
+            #expect(error == .forbidden(
+                message: "mymind denied this. Check the key's access level; quick notes require Full access."
+            ))
+            #expect(error.localizedDescription == "mymind denied this. Check the key's access level; quick notes require Full access.")
+        }
+    }
+
     @Test func quickNoteCreatesMarkdownContentObject() async throws {
         MockURLProtocol.requestHandler = { request in
             #expect(request.url?.path == "/objects")
