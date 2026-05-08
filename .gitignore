@@ -1,0 +1,23 @@
+# macOS
+.DS_Store
+
+# Swift Package Manager
+.build/
+.swiftpm/
+DerivedData/
+
+# Xcode user state
+*.xcuserstate
+*.xcuserdata/
+
+# Local credentials and agent state
+.env
+.env.*
+!.env.example
+.claude/
+
+# Generated documentation archive. Recreate with Scripts/scrape-mymind-api-docs.py.
+mymind-api-docs/
+
+# Local packaged app output
+*.app/
